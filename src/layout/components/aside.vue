@@ -12,7 +12,7 @@
         <i class="iconfont icon-home"></i>
         <span slot="title">首页</span>
       </el-menu-item>
-      <el-menu-item index="2">
+      <el-menu-item index="/article">
         <i class="iconfont icon-calendar-alt"></i>
         <span slot="title">内容管理</span>
       </el-menu-item>

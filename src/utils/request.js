@@ -15,7 +15,7 @@ request.interceptors.request.use(function (config) {
   // config 配置相关的信息对象 config 是可以修改的
   // return 之后请求会真正发出去
   // 出去之前进行统一配置 获取LocalStorage里面的token 转换字符串
-  console.log(config)
+  // console.log(config)
   const user = JSON.parse(window.localStorage.getItem('user'))
   if (user) {
     config.headers.Authorization = `Bearer ${user.token}`

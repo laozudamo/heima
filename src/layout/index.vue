@@ -9,7 +9,6 @@
       <div class="index-topnav">
         <div class="topnav-start">
           <i
-          class="el-icon-s-unfold"
           :class="[isCollapse ? 'el-icon-s-fold':'el-icon-s-unfold']"  @click="flod"></i>
           <h3>河马系统</h3>
         </div>
@@ -24,7 +23,8 @@
           <i class="iconfont icon-blueberryuserset"></i>
           个人设置
         </el-dropdown-item>
-        <el-dropdown-item>
+        <!-- 组件默认不识别原生事件 除非内部做了处理 所以这里加.native -->
+        <el-dropdown-item @click.native="onLogout">
           <i class="iconfont icon-login"></i>
           退出登录
         </el-dropdown-item>
@@ -32,7 +32,10 @@
         </el-dropdown>
       </div>
     </el-header>
-    <el-main>Main</el-main>
+    <el-main>
+      <!-- 子路由出口 -->
+      <router-view />
+    </el-main>
   </el-container>
   </el-container>
   </div>
@@ -72,6 +75,31 @@ export default {
     },
     flod () { // 折叠导航栏
       this.isCollapse = !this.isCollapse
+    },
+    onLogout (done) {
+      // console.log('退出');
+      // 把用户登录状态清除
+      this.$confirm('确定退出账号, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // 跳转到登录页面
+        window.localStorage.removeItem('user')
+        this.$router.push('/login')
+
+        // 退出成功消息提示
+        this.$message({
+          type: 'success',
+          message: '退出成功!'
+        })
+      }).catch(() => {
+        // 取消退出消息提示
+        this.$message({
+          type: 'info',
+          message: '已取消退出'
+        })
+      })
     }
   }
 }
