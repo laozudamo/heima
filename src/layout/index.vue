@@ -76,7 +76,7 @@ export default {
     flod () { // 折叠导航栏
       this.isCollapse = !this.isCollapse
     },
-    onLogout (done) {
+    onLogout () {
       // console.log('退出');
       // 把用户登录状态清除
       this.$confirm('确定退出账号, 是否继续?', '提示', {
