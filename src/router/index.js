@@ -4,6 +4,7 @@ import Login from '@/views/login'
 import Home from '@/views/home'
 import Layout from '@/layout'
 import Article from '@/views/article'
+import Publish from '@/views/publish'
 
 Vue.use(VueRouter)
 
@@ -18,7 +19,8 @@ const routes = [
     component: Layout,
     children: [
       { path: '/', name: 'home', component: Home },
-      { path: '/article', name: 'article', component: Article }
+      { path: '/article', name: 'article', component: Article },
+      { path: '/publish', name: 'publish', component: Publish }
     ]
   }
 ]

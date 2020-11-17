@@ -14,7 +14,7 @@
     <!-- 表单 -->
   <div class="text-item">
     <div class="home-form">
-      <el-form ref="form" :model="form" label-width="40px" size="small">
+      <el-form ref="form" label-width="40px" size="small">
       <el-form-item label="状态">
         <el-radio-group v-model="status">
           <el-radio :label="null">全部</el-radio>
@@ -120,7 +120,7 @@
           prop="name"
           label="操作">
           <!-- 如果需要自定义内容 需要把内容放在template -->
-            <template>
+            <template slot-scope="scope">
               <el-button
                 size="mini"
                 icon="el-icon-edit"
@@ -131,7 +131,7 @@
                 type="danger"
                 icon="el-icon-delete"
                 circle
-                @click="onDeleteArticle"
+                @click="onDeleteArticle(scope.row.id)"
                ></el-button>
             </template>
         </el-table-column>
@@ -145,6 +145,7 @@
       background
       layout="prev, pager, next"
       class="paging"
+      :current-page.sync="page"
       :disabled="loading"
       :page-size="pageSize"
       @current-change='onCurrentChange'
@@ -160,7 +161,8 @@
 <script>
 import {
   getArticles,
-  getArticleChannels
+  getArticleChannels,
+  deleteArticle
 } from '@/api/article.js'
 export default {
   name: 'HomeIndex',
@@ -168,13 +170,6 @@ export default {
   props: {},
   data () {
     return {
-      form: {
-        name: '',
-        region: '',
-        date1: '',
-        date2: '',
-        date: []
-      },
       articles: [], // 文章数据列表
       articleStatus: [
         { status: 0, text: '草稿', type: 'warning' },
@@ -189,7 +184,8 @@ export default {
       channels: [], // 频道
       channelId: null, // 查询文章频道
       rangeDate: null, // 范围日期
-      loading: true // 数据加载
+      loading: true, // 数据加载
+      page: 1,
     }
   },
   computed: {},
@@ -203,7 +199,7 @@ export default {
     loadArticles (page = 1) {
       this.loading = true
       getArticles({
-        // 这里传递参数 可以写成 page 应为同名
+        // 这里传递参数 可以写成 page 属性和参数同名
         page: page,
         per_page: this.pageSize,
         status: this.status,
@@ -229,7 +225,7 @@ export default {
 
     loadChannels () { /* 获取频道 */
       getArticleChannels().then(res => {
-        console.log(res)
+        // console.log(res)
         this.channels = res.data.data.channels
       }).catch(err => {
         console.log(err, '获取频道出现错误')
@@ -240,19 +236,14 @@ export default {
       this.loadArticles(page)
     },
 
-    onDeleteArticle () { // 删除文章
-      // 找到接口
-      // 封装请求方法
-      // 删除调用
-      // 处理响应结果
-      this.$confirm('确定退出账号, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(res => {
-        console.log(res)
-      }).catch(err => {
-        console.log(err)
+    onDeleteArticle (articleId) { // 删除文章
+
+      deleteArticle(articleId.toString()).then(res=>{
+        // 删除成功 调用重新加载当前页页面文章
+        this.loadArticles(this.page)
+        // console.log(res)
+      }).catch(err=>{
+        console.log(err);
       })
     }
 

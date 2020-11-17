@@ -13,6 +13,7 @@ function getArticles (params) {
     params
   })
 }
+
 /* 获取文章频道 */
 function getArticleChannels () {
   return request({
@@ -26,9 +27,20 @@ function deleteArticle (articleId) {
     method: 'DELETE',
     // 文章路径参数要在url中传递
     // :xxx 形式 需要传递参数
-    url: `/mp/v1_0/articles/:${articleId}`
+    url: `/mp/v1_0/articles?target=${articleId}`,
+   /*  params:{
+      target:articleId
+    } */
   })
 }
 
+/* 新建文章 */
+  function creatArticles (draft) {
+    return request({
+      method: ' POST',
+      url: '/mp/v1_0/articles',
+      draft // true 为草稿
+    })
+  }
 /* export 需要加逗号 */
-export { getArticles, getArticleChannels, deleteArticle }
+export { getArticles, getArticleChannels, deleteArticle, creatArticles }

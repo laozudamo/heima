@@ -2,9 +2,24 @@
  * 基于 axios 封装的请求模块
  */
 import axios from 'axios'
+import JSONbig from 'json-bigint'
 
 const request = axios.create({
-  baseURL: 'http://ttapi.research.itcast.cn/' // 请求的基础路径
+  baseURL: 'http://ttapi.research.itcast.cn/', // 请求的基础路径
+
+  /* 解决大整数的问题 */
+  // Do whatever you want to transform the data
+  /* 如果成功 则返回处理后的值 */
+  /* 用的时候需要tostring() */
+  transformResponse: [function (data) {
+    try{
+      return JSONbig.parse(data)
+    } catch (err) {
+      /* 错误 返回原值 */
+      console.log(err,'处理大整数错误');
+      return data
+    }
+  }]
 })
 
 // 请求拦截器

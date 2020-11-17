@@ -20,7 +20,7 @@
         <i class="iconfont icon-file"></i>
         <span slot="title">素材管理</span>
       </el-menu-item>
-      <el-menu-item index="4">
+      <el-menu-item index="/publish">
         <i class="iconfont icon-paper-plane"></i>
         <span slot="title">发布文章</span>
       </el-menu-item>
