@@ -27,20 +27,43 @@ function deleteArticle (articleId) {
     method: 'DELETE',
     // 文章路径参数要在url中传递
     // :xxx 形式 需要传递参数
-    url: `/mp/v1_0/articles?target=${articleId}`,
-   /*  params:{
+    url: `/mp/v1_0/articles?target=${articleId}`
+    /*  params:{
       target:articleId
     } */
   })
 }
 
 /* 新建文章 */
-  function creatArticles (draft) {
-    return request({
-      method: ' POST',
-      url: '/mp/v1_0/articles',
-      draft // true 为草稿
-    })
-  }
+function addArticles (data, draft=false ) {
+  return request({
+    method: 'POST',
+    url: '/mp/v1_0/articles',
+    params: {
+      draft // query 参数  true 为草稿 默认false 用params
+    },
+    data 
+  })
+}
+
+/* 获取指定文章 */
+function getCurrentArticle(articleId) {
+  return request({
+     method: 'GET',
+     url: `/mp/v1_0/articles/${articleId}`
+  })
+}
+
+/* 编辑文章 */
+function reEditArticle(articleId,data,draft=false) {
+  return request({
+    method: 'PUT',
+    url: `/mp/v1_0/articles/${articleId}`,
+    params: {
+      draft
+    },
+    data
+  })
+}
 /* export 需要加逗号 */
-export { getArticles, getArticleChannels, deleteArticle, creatArticles }
+export { getArticles, getArticleChannels, deleteArticle, addArticles, getCurrentArticle, reEditArticle }

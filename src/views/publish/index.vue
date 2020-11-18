@@ -6,7 +6,8 @@
           <!-- 面包屑 -->
           <el-breadcrumb separator-class="el-icon-arrow-right">
             <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-            <el-breadcrumb-item>发布文章</el-breadcrumb-item>
+            <!-- 知识点 -->
+            <el-breadcrumb-item>{{ $route.query.id ? '修改文章' : '发布文章' }}</el-breadcrumb-item>
           </el-breadcrumb>
         </span>
       </div>
@@ -16,12 +17,19 @@
           <el-form-item label="标题" prop="title">
             <el-input v-model="article.title"></el-input>
           </el-form-item>
+          <!-- 富文本 -->
           <el-form-item label="内容" prop="content">
-            <el-input type="textarea" v-model="article.content"></el-input>
+             <el-tiptap
+                v-model="article.content"
+                :extensions="extensions"
+                placeholder="请输入内容"
+                height="480px"
+                lang=zh
+              />
+            <!-- <el-input type="textarea" v-model="article.content"></el-input> -->
           </el-form-item>
           <!-- 封面 -->
-          <el-form-item label="封面" prop="resource">
-
+          <el-form-item label="封面" >
             <el-radio-group v-model="article.cover.type">
               <el-radio label="1">单图</el-radio>
               <el-radio label="0">无图</el-radio>
@@ -31,10 +39,9 @@
           </el-form-item>
 
           <!-- 组件标签 -->
-      <!--     <el-form-item>
+       <!--    <el-form-item>
             <up-cover />
-          </el-form-item>
- -->
+          </el-form-item> -->
 
           <el-form-item label="频道">
             <el-select v-model="article.channel_id" placeholder="请选择频道">
@@ -47,8 +54,8 @@
           </el-form-item>
 
           <el-form-item>
-            <el-button type="primary">立即创建</el-button>
-            <el-button>重置</el-button>
+            <el-button type="primary" @click="onPublish(false)">发表</el-button>
+            <el-button @click="onPublish(true)">存入草稿</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -58,12 +65,36 @@
 </template>
 
 <script>
-import { creatArticles, getArticleChannels } from '@/api/article'
- // import UpCover from './components/updialog'
+
+import { uploadImage } from '@/api/images'
+import { addArticles, getArticleChannels, getCurrentArticle, reEditArticle} from '@/api/article'
+import {
+  ElementTiptap,  
+  Doc,
+  Text,
+  Paragraph,
+  Heading,
+  Bold,
+  Underline,
+  Italic,
+  Strike,
+  ListItem,
+  BulletList,
+  OrderedList,
+  TodoItem,
+  TodoList,
+  TextColor,
+  Fullscreen,
+  Image,
+  HorizontalRule,
+  CodeBlock
+} from 'element-tiptap'
+import 'element-tiptap/lib/index.css'
+
 export default {
-  name: 'indexPublish', 
+  name: 'indexPublish',
   components: {
- /*    UpCover */
+    'el-tiptap': ElementTiptap
   },
   props: {},
   data () {
@@ -81,30 +112,107 @@ export default {
       channels: [], // 频道 注意不要写道里面了
 
       rules: {
-        title: [ { required: true, message: '请输入活动名称', trigger: 'blur' } ],
-        content: [ { required: true, message: '请输入活动名称', trigger: 'blur' } ]
-      }
+        title: [{ required: true, message: '请输入标题名称', trigger: 'blur' },
+                { pattern: /.{5,30}/, message: '标题内容请在5-30个字符以内', trigger: 'blur' }],
+        content: [{ required: true, message: '请输入活动名称', trigger: 'blur' }]
+      },
+
+      extensions: [
+        new Doc(),
+        new Text(),
+        new Paragraph(),
+        new Heading({ level: 5 }),
+        new Bold({ bubble: true }), // render command-button in bubble menu.
+        new Underline({ bubble: true, menubar: false }), // render command-button in bubble menu but not in menubar.
+        new Italic(),
+        new Strike(),
+        new ListItem(),
+        new BulletList(),
+        new OrderedList(),
+        new TodoItem(),
+        new TodoList(), //(use with TodoItem)
+        new TextColor(),
+        new Fullscreen(),
+        new Image({
+           // 默认会把图片生成 base64 字符串和内容存储在一起，如果需要自定义图片上传
+          uploadRequest (file) {
+            // 如果接口要求 Content-Type 是 multipart/form-data，则请求体必须使用 FormData
+            const fd = new FormData()
+            fd.append('image', file)
+            // 第1个 return 是返回 Promise 对象
+            // 为什么？因为 axios 本身就是返回 Promise 对象
+            return uploadImage(fd).then(res => {
+              // 这个 return 是返回最后的结果
+              return res.data.data.url
+            })
+          } // 图片的上传方法，返回一个 Promise<url>
+        }),
+        new HorizontalRule(),
+        new CodeBlock(),
+      ],
+
     }
   },
   computed: {},
   watch: {},
   created () {
     this.loadArticleChannels()
-    this.onCreatArticles()
-  },
-  mounted () {},
-  methods: {
-    onCreatArticles () {
-
-    },
-
-    loadArticleChannels () {
-      getArticleChannels().then(res=>{
-        this.channels= res.data.data.channels
-        console.log(res)
+    // 这里是route的值
+    if(this.$route.query.id) {
+      getCurrentArticle(this.$route.query.id).then(res=>{
+       /*  console.log(res) */
+        this.article=res.data.data
       }).catch(err=>{
         console.log(err)
       })
+    }
+  },
+  mounted () {},
+  methods: {
+
+    loadArticleChannels () {
+      getArticleChannels().then(res => {
+        this.channels = res.data.data.channels
+      /*   console.log(res) */
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+
+    onPublish (draft=false) {
+      // 找到接口
+      const articleId = this.$route.query.id
+      if(articleId) {
+        reEditArticle(articleId,this.article,draft).then(res=>{
+        /*   console.log(res) */
+           this.$message({
+            message: `${draft ? '存入草稿' : '修改成功'}`,
+            type: 'success'
+          })
+
+        this.$router.push('/')
+
+        }).catch(err=>{
+          console.log(err,'修改失败');
+        })
+      } else {
+       /*  发布文章 */
+        addArticles(this.article,draft).then(res => {
+          /* console.log(res) */
+          this.$message({
+              message: `${draft ? '存入草稿' : '发布成功'}`,
+              type: 'success'
+            })
+
+          this.$router.push('/')
+
+          }).catch(err => {
+          console.log(err)
+          this.$message.error('操作失败')
+        })
+      }
+      // 处理结果
+  
     }
   }
 }

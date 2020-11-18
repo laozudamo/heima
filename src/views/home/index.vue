@@ -117,14 +117,15 @@
           label="发布时间">
         </el-table-column>
         <el-table-column
-          prop="name"
           label="操作">
           <!-- 如果需要自定义内容 需要把内容放在template -->
+          <!-- 这里面不需要加this -->
             <template slot-scope="scope">
               <el-button
                 size="mini"
                 icon="el-icon-edit"
                 circle
+                @click="$router.push('/publish?id='+scope.row.id)" 
                ></el-button>
               <el-button
                 size="mini"
@@ -185,7 +186,7 @@ export default {
       channelId: null, // 查询文章频道
       rangeDate: null, // 范围日期
       loading: true, // 数据加载
-      page: 1,
+      page: 1
     }
   },
   computed: {},
@@ -237,13 +238,12 @@ export default {
     },
 
     onDeleteArticle (articleId) { // 删除文章
-
-      deleteArticle(articleId.toString()).then(res=>{
+      deleteArticle(articleId.toString()).then(res => {
         // 删除成功 调用重新加载当前页页面文章
         this.loadArticles(this.page)
         // console.log(res)
-      }).catch(err=>{
-        console.log(err);
+      }).catch(err => {
+        console.log(err)
       })
     }
 

@@ -12,11 +12,11 @@ const request = axios.create({
   /* 如果成功 则返回处理后的值 */
   /* 用的时候需要tostring() */
   transformResponse: [function (data) {
-    try{
+    try {
       return JSONbig.parse(data)
     } catch (err) {
       /* 错误 返回原值 */
-      console.log(err,'处理大整数错误');
+      console.log(err, '处理大整数错误')
       return data
     }
   }]
