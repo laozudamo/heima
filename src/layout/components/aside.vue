@@ -16,7 +16,7 @@
         <i class="iconfont icon-calendar-alt"></i>
         <span slot="title">内容管理</span>
       </el-menu-item>
-      <el-menu-item index="3">
+      <el-menu-item index="/material">
         <i class="iconfont icon-file"></i>
         <span slot="title">素材管理</span>
       </el-menu-item>

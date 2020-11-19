@@ -13,7 +13,7 @@
       </div>
       <div>
         <!-- 页面主体 -->
-        <el-form :model="article" :rules="rules" label-width="80px">
+        <el-form :model="article" :rules="rules" label-width="80px" ref="publish-form">
           <el-form-item label="标题" prop="title">
             <el-input v-model="article.title"></el-input>
           </el-form-item>
@@ -43,7 +43,7 @@
             <up-cover />
           </el-form-item> -->
 
-          <el-form-item label="频道">
+          <el-form-item label="频道" prop="channel_id">
             <el-select v-model="article.channel_id" placeholder="请选择频道">
               <el-option
               v-for="(item, index) in channels"
@@ -67,9 +67,9 @@
 <script>
 
 import { uploadImage } from '@/api/images'
-import { addArticles, getArticleChannels, getCurrentArticle, reEditArticle} from '@/api/article'
+import { addArticles, getArticleChannels, getCurrentArticle, reEditArticle } from '@/api/article'
 import {
-  ElementTiptap,  
+  ElementTiptap,
   Doc,
   Text,
   Paragraph,
@@ -113,8 +113,19 @@ export default {
 
       rules: {
         title: [{ required: true, message: '请输入标题名称', trigger: 'blur' },
-                { pattern: /.{5,30}/, message: '标题内容请在5-30个字符以内', trigger: 'blur' }],
-        content: [{ required: true, message: '请输入活动名称', trigger: 'blur' }]
+          { pattern: /.{5,30}/, message: '标题内容请在5-30个字符以内', trigger: 'blur' }],
+        content: [{
+          validator(rule, value, callback) {
+            if(value == '<p></p>' || value == "" ) {
+              callback( new Error('请输入文章内容') )
+            } else {
+              callback()
+            }
+          } 
+        }],
+        channel_id: [ {
+           required: true, message: '请选择文章频道', 
+        }]
       },
 
       extensions: [
@@ -130,11 +141,11 @@ export default {
         new BulletList(),
         new OrderedList(),
         new TodoItem(),
-        new TodoList(), //(use with TodoItem)
+        new TodoList(), // (use with TodoItem)
         new TextColor(),
         new Fullscreen(),
         new Image({
-           // 默认会把图片生成 base64 字符串和内容存储在一起，如果需要自定义图片上传
+          // 默认会把图片生成 base64 字符串和内容存储在一起，如果需要自定义图片上传
           uploadRequest (file) {
             // 如果接口要求 Content-Type 是 multipart/form-data，则请求体必须使用 FormData
             const fd = new FormData()
@@ -148,8 +159,8 @@ export default {
           } // 图片的上传方法，返回一个 Promise<url>
         }),
         new HorizontalRule(),
-        new CodeBlock(),
-      ],
+        new CodeBlock()
+      ]
 
     }
   },
@@ -158,11 +169,11 @@ export default {
   created () {
     this.loadArticleChannels()
     // 这里是route的值
-    if(this.$route.query.id) {
-      getCurrentArticle(this.$route.query.id).then(res=>{
-       /*  console.log(res) */
-        this.article=res.data.data
-      }).catch(err=>{
+    if (this.$route.query.id) {
+      getCurrentArticle(this.$route.query.id).then(res => {
+        /*  console.log(res) */
+        this.article = res.data.data
+      }).catch(err => {
         console.log(err)
       })
     }
@@ -179,40 +190,42 @@ export default {
       })
     },
 
-    onPublish (draft=false) {
+    onPublish (draft = false) {
       // 找到接口
-      const articleId = this.$route.query.id
-      if(articleId) {
-        reEditArticle(articleId,this.article,draft).then(res=>{
+      this.$refs['publish-form'].validate(valid=>{
+        if(!valid) {
+          return
+        }
+        /* 验证提交表单 */
+            const articleId = this.$route.query.id
+      if (articleId) {
+        reEditArticle(articleId, this.article, draft).then(res => {
         /*   console.log(res) */
-           this.$message({
+          this.$message({
             message: `${draft ? '存入草稿' : '修改成功'}`,
             type: 'success'
           })
 
-        this.$router.push('/')
-
-        }).catch(err=>{
-          console.log(err,'修改失败');
+          this.$router.push('/')
+        }).catch(err => {
+          console.log(err, '修改失败')
         })
       } else {
-       /*  发布文章 */
-        addArticles(this.article,draft).then(res => {
-          /* console.log(res) */
-          this.$message({
+        /*  发布文章 */
+          addArticles(this.article, draft).then(res => {
+            /* console.log(res) */
+            this.$message({
               message: `${draft ? '存入草稿' : '发布成功'}`,
               type: 'success'
             })
-
-          this.$router.push('/')
-
-          }).catch(err => {
-          console.log(err)
-          this.$message.error('操作失败')
+            this.$router.push('/')
+            }).catch(err => {
+            console.log(err)
+            this.$message.error('操作失败')
+            })
+          }
         })
-      }
       // 处理结果
-  
     }
   }
 }

@@ -35,27 +35,27 @@ function deleteArticle (articleId) {
 }
 
 /* 新建文章 */
-function addArticles (data, draft=false ) {
+function addArticles (data, draft = false) {
   return request({
     method: 'POST',
     url: '/mp/v1_0/articles',
     params: {
       draft // query 参数  true 为草稿 默认false 用params
     },
-    data 
+    data
   })
 }
 
 /* 获取指定文章 */
-function getCurrentArticle(articleId) {
+function getCurrentArticle (articleId) {
   return request({
-     method: 'GET',
-     url: `/mp/v1_0/articles/${articleId}`
+    method: 'GET',
+    url: `/mp/v1_0/articles/${articleId}`
   })
 }
 
 /* 编辑文章 */
-function reEditArticle(articleId,data,draft=false) {
+function reEditArticle (articleId, data, draft = false) {
   return request({
     method: 'PUT',
     url: `/mp/v1_0/articles/${articleId}`,

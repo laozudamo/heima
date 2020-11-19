@@ -5,6 +5,7 @@ import Home from '@/views/home'
 import Layout from '@/layout'
 import Article from '@/views/article'
 import Publish from '@/views/publish'
+import Material from '@/views/material'
 
 Vue.use(VueRouter)
 
@@ -20,7 +21,8 @@ const routes = [
     children: [
       { path: '/', name: 'home', component: Home },
       { path: '/article', name: 'article', component: Article },
-      { path: '/publish', name: 'publish', component: Publish }
+      { path: '/publish', name: 'publish', component: Publish },
+      { path: '/material', name: 'material', component: Material }
     ]
   }
 ]
