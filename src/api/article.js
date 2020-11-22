@@ -65,5 +65,20 @@ function reEditArticle (articleId, data, draft = false) {
     data
   })
 }
+
+/* 修改文章评论状态 */
+function editComment (articleId,allowComment) {
+  return request({
+    method: 'PUT',
+    url: '/mp/v1_0/comments/status',
+    params: {
+      article_id: articleId
+    },
+    data: {
+      allow_comment: allowComment
+    }
+  })
+}
+
 /* export 需要加逗号 */
-export { getArticles, getArticleChannels, deleteArticle, addArticles, getCurrentArticle, reEditArticle }
+export { getArticles, getArticleChannels, deleteArticle, addArticles, getCurrentArticle, reEditArticle,editComment }

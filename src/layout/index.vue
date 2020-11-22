@@ -14,14 +14,14 @@
         </div>
         <el-dropdown>
          <div class="avatar-wrap">
-          <img :src="user.photo" alt="">
+          <img :src="user.photo">
           <span>{{user.name}}</span>
           <i class="el-icon-arrow-down el-icon--right"></i>
          </div>
         <el-dropdown-menu slot="dropdown">
         <el-dropdown-item>
           <i class="iconfont icon-blueberryuserset"></i>
-          个人设置
+          <el-button type="text" @click="LinktoSetting">个人设置</el-button>
         </el-dropdown-item>
         <!-- 组件默认不识别原生事件 除非内部做了处理 所以这里加.native -->
         <el-dropdown-item @click.native="onLogout">
@@ -42,8 +42,10 @@
 </template>
 
 <script>
+import globalBus from '@/utils/globalbus.js'
 import AppAside from '@/layout/components/aside' // 引入组件
 import { getUserProfile } from '@/api/user.js'
+
 export default {
   name: 'indexLayout',
   components: {
@@ -61,6 +63,14 @@ export default {
   created () {
     // 组件初始化好 请求获取用户资料
     this.loadUserProfile()
+    
+    /* 注事件接受 接收 */
+    globalBus.$on('updateuser',data => {
+       // this.user = data // 注意：不要这么做，对象之间赋值的是引用，会导致相互影响的问题
+      this.user.name = data.name
+      this.user.photo = data.photo
+    })
+
   },
   mounted () {},
   methods: {
@@ -76,6 +86,15 @@ export default {
     flod () { // 折叠导航栏
       this.isCollapse = !this.isCollapse
     },
+    /* 跳到设置页 */
+    LinktoSetting () {
+      /* 这里有问题 */
+      if(this.$router.path == '/setting') {
+        console.log(11);
+      }
+      this.$router.push('/setting')
+    },
+
     onLogout () {
       // console.log('退出');
       // 把用户登录状态清除

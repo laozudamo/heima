@@ -21,6 +21,23 @@ export const getUserProfile = () => {
     // }
   })
 }
+/* 修改用户数据 */
+export const rewriteUserData = (data)=> {
+  return request({
+    method: 'PATCH',
+    url: '/mp/v1_0/user/profile',
+    data
+  })
+}
+
+/* 修改用户头像  这里data 传输formData 对象过来*/
+export const editUserPhoto = (data)=> {
+  return request({
+    method: 'PATCH',
+    url: '/mp/v1_0/user/photo',
+    data
+  })
+}
 //  function loginBeg(data){
 //   return request({
 //      method: 'POST',

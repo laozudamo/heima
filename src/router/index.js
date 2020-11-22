@@ -6,6 +6,10 @@ import Layout from '@/layout'
 import Article from '@/views/article'
 import Publish from '@/views/publish'
 import Material from '@/views/material'
+import Comment from '@/views/comment'
+import Setting from '@/views/setting'
+import Echarts from '@/views/echarts'
+import Fans from '@/views/fans'
 
 Vue.use(VueRouter)
 
@@ -22,7 +26,11 @@ const routes = [
       { path: '/', name: 'home', component: Home },
       { path: '/article', name: 'article', component: Article },
       { path: '/publish', name: 'publish', component: Publish },
-      { path: '/material', name: 'material', component: Material }
+      { path: '/material', name: 'material', component: Material },
+      { path: '/comment', name: 'comment', component: Comment },
+      { path: '/setting', name: 'setting', component: Setting },
+      { path: '/echarts', name: 'echarts', component: Echarts },
+      { path: '/fans', name: 'fans', component: Fans },
     ]
   }
 ]

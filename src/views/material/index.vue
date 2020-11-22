@@ -23,11 +23,43 @@
   <div>
     <el-row :gutter="20" style="margin-top: 20px">
       <el-col :xs="12" :sm="6"  :lg="4"   v-for="(image,index) in images"
-          :key="index" >
+          :key="index"
+          >
+          <div class="image-wrap">
         <el-image
           style="height: 200px"
-          fit="cover"
-          :src="image.url" />
+          fit="fit"
+          :src="image.url">
+        </el-image>
+        <div class="image-action">
+          <!-- 
+            class 样式绑定
+            css类名 : 布尔值
+           -->
+            <el-button type="warning"
+            circle
+            :icon="image.is_collected ? 'el-icon-star-on' : 'el-icon-star-off' "
+            @click="onIsCollect(image)"
+            size="small"
+            :loading="image.loading">
+            </el-button>
+
+            <el-button type="danger"
+            icon="el-icon-delete"
+            circle size="small"
+            :loading="image.deleteLoadStatus"
+            @click="onDeleteImage(image)"
+            ></el-button>
+          <!-- <i :class="{
+            'el-icon-star-on' : image.is_collected,
+            'el-icon-star-off' : !image.is_collected
+          }"
+          @click="onIsCollect(image)"
+          ></i> -->
+          <!-- <i :class="[image.is_collected ? 'el-icon-star-on' : 'el-icon-star-off']"></i> -->
+          <!-- <i class="el-icon-delete"></i> -->
+        </div>
+        </div>
       </el-col>  
     </el-row>
   </div>
@@ -36,7 +68,7 @@
   <el-dialog
     title="上传图片"
     :visible.sync="dialogUp"
-    width="35%">
+    width="20%">
 
   <!-- 图片上传 
     配置 headers 
@@ -59,18 +91,19 @@
   </el-dialog>
 
   <!-- 分页器 -->
-  <el-pagination
+   <el-pagination
     layout="prev, pager, next"
+    :total="totalCount"
+    :page-size="pageSize"
+    @current-change="onCurrentChange"
     :current-page.sync="page"
-    :page-size="20"
-    :page="page"
     />
 </el-card>
   </div>
 </template>
 
 <script>
-import { getImages } from '@/api/images'
+import { getImages, collectImage,deleteImage} from '@/api/images'
 export default {
   name: 'indexMaterial', 
   components: {},
@@ -80,9 +113,9 @@ export default {
     return {
       radio: 'false',
       images:[],
-      iscollect:false,
       page:1,
-      pageSize:20,
+      pageSize:10,
+      totalCount: 0,
       dialogUp:false,
       upLoadHeader:{
         Authorization:`Bearer ${user.token}`
@@ -98,28 +131,57 @@ export default {
   mounted () {},
   methods: {
     /* 加载图片 */
-    loadgetImages (collect=false) {
+    loadgetImages (page) {
       getImages({
-        collect,
+        collect: this.radio,
         page:this.page,
         per_page:this.pageSize
       }).then(res => {
-        this.images = res.data.data.results
-        console.log(res)
+        const results = res.data.data.results
+        results.forEach(image => {
+          image.loading=false
+          
+          image.deleteLoadStatus=false
+        })
+        this.images = results
+        this.totalCount = res.data.data.total_count
+       /*  console.log(res) */
       }).catch(err => {
         console.log(err)
       })
     },
 
     onCollectChange(value) {
-      this.loadgetImages(value)
+      this.loadgetImages(1,value)
     },
 
     onUploadSuccess() {
       // 关闭对话框
       this.dialogUp=false
       // 更新素材列表
-      this.loadgetImages(false)
+      this.loadgetImages(this.radio)
+    },
+    /* 切换页面 */
+    onCurrentChange(page){
+      this.loadgetImages(page)
+    },
+
+    /* 收藏 */
+    onIsCollect(image) {
+      image.loading=true
+
+      collectImage(image.id, !image.is_collected).then(res=>{
+        image.is_collected = !image.is_collected
+        image.loading=false
+      })
+    },
+    /* 删除 */
+    onDeleteImage(image){
+       image.deleteLoadStatus=true
+      deleteImage(image.id).then(res=>{
+        this.loadgetImages(this.page)
+         image.deleteLoadStatus=false
+      })
     }
   }
 }
@@ -131,5 +193,20 @@ export default {
   justify-content: space-between;
 }
 
+.image-wrap {
+  position: relative;
+}
+.image-action{
+  position: absolute;
+  height: 40px;
+  bottom: 1px;
+  left: 0px;
+  width: 100%;
+  background-color: rgba(	119,136,153,.8);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  color: #fff;
+}
 
 </style>

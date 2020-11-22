@@ -24,17 +24,21 @@
         <i class="iconfont icon-paper-plane"></i>
         <span slot="title">发布文章</span>
       </el-menu-item>
-      <el-menu-item index="5">
+      <el-menu-item index="/comment">
         <i class="iconfont icon-smile-fill"></i>
         <span slot="title">评论管理</span>
       </el-menu-item>
-      <el-menu-item index="6">
+      <el-menu-item index="/fans">
         <i class="iconfont icon-food"></i>
         <span slot="title">粉丝管理</span>
       </el-menu-item>
-      <el-menu-item index="7">
+      <el-menu-item index="/setting">
         <i class="iconfont icon-cog-fill"></i>
         <span slot="title">个人设置</span>
+      </el-menu-item>
+      <el-menu-item index="/echarts">
+        <i class="el-icon-s-data"></i>
+        <span slot="title">Echarts</span>
       </el-menu-item>
     </el-menu>
 </template>
