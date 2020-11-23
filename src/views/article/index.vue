@@ -1,6 +1,15 @@
 <template>
   <div class="article-container">
-    内容页面
+     <el-radio-group v-model="radio">
+    <el-radio :label="1">备选项</el-radio>
+    <el-radio :label="2">备选项</el-radio>
+    <el-radio :label="3">备选项</el-radio>
+  </el-radio-group>
+  <div v-for="(item,a) in radio"
+  :key='a' >
+  {{item}}
+    dwadw
+  </div>
   </div>
 </template>
 
@@ -10,7 +19,9 @@ export default {
   components: {},
   props: {},
   data () {
-    return {}
+    return {
+       radio: 3
+    }
   },
   computed: {},
   watch: {},

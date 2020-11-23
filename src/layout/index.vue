@@ -89,9 +89,6 @@ export default {
     /* 跳到设置页 */
     LinktoSetting () {
       /* 这里有问题 */
-      if(this.$router.path == '/setting') {
-        console.log(11);
-      }
       this.$router.push('/setting')
     },
 

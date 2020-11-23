@@ -214,6 +214,7 @@ export default {
         // total_count: totalCountnumber 重命名
         const { results, total_count: totalCountnumber } = res.data.data
         this.articles = results
+        console.log(res);
         this.totalCount = totalCountnumber
         this.loading = false
       /*   this.articles = res.data.data.results

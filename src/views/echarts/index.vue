@@ -1,19 +1,36 @@
 <template>
   <div>
-    <div ref="main" style="width: 600px;height:400px;"></div>
-    
-    <h2>地图示例</h2>
+    <div ref="main" style="width: 500px;height:400px;"></div>
+    <!-- 
+      1 来个盒子
+      2 引入 echarts
+      3 初始化实例
+      4 使用配置
+      5 找到配置 引入
+      6 扩展类 按照扩展引入 
+     -->
+    <h2>圆圈</h2>
     <cirle />
+
+    <h3>百度地图</h3>
+    <baidu-map />
+
+    <h2>mapdemo</h2>
+    <map-demo />
   </div>
 </template>
 
 <script>
 import echarts from 'echarts'
 import cirle from './components/cirle'
+import baiduMap from './components/map'
+import mapDemo from './components/mapdemo'
 export default {
   name: 'indexEcharts', 
   components: {
-    cirle
+    cirle,
+    baiduMap,
+    mapDemo
   },
   props: {},
   data () {

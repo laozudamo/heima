@@ -38,10 +38,11 @@
             </el-radio-group>
           </el-form-item>
 
-          <!-- 组件标签 -->
-       <!--    <el-form-item>
-            <up-cover />
-          </el-form-item> -->
+          <!-- 封面组件 -->
+          <el-form-item>
+             <article-cover v-for="(item,index) in article.cover.type" :key="index" @update-cover="onUpdateCover(index,$event)"><!-- 只能是$event -->
+            </article-cover>
+          </el-form-item>
 
           <el-form-item label="频道" prop="channel_id">
             <el-select v-model="article.channel_id" placeholder="请选择频道">
@@ -65,8 +66,9 @@
 </template>
 
 <script>
-
+import ArticleCover from './components/articleCover'
 import { uploadImage } from '@/api/images'
+
 import { addArticles, getArticleChannels, getCurrentArticle, reEditArticle } from '@/api/article'
 import {
   ElementTiptap,
@@ -94,7 +96,8 @@ import 'element-tiptap/lib/index.css'
 export default {
   name: 'indexPublish',
   components: {
-    'el-tiptap': ElementTiptap
+    'el-tiptap': ElementTiptap, /* 富文本 */
+    ArticleCover /* 组件 */
   },
   props: {},
   data () {
@@ -106,10 +109,11 @@ export default {
           type: 0, // 封面类型 -1:自动，0-无图，1-1张，3-3张
           images: [] // 封面图片地址
         },
+        label:0,
         channel_id: null
       },
 
-      channels: [], // 频道 注意不要写道里面了
+      channels: [], // 频道 注意不要写里面
 
       rules: {
         title: [{ required: true, message: '请输入标题名称', trigger: 'blur' },
@@ -166,13 +170,14 @@ export default {
   },
   computed: {},
   watch: {},
+
   created () {
+
     this.loadArticleChannels()
     // 这里是route的值
     if (this.$route.query.id) {
       getCurrentArticle(this.$route.query.id).then(res => {
-        /*  console.log(res) */
-        this.article = res.data.data
+        this.article = res.data.data  
       }).catch(err => {
         console.log(err)
       })
@@ -181,6 +186,7 @@ export default {
   mounted () {},
   methods: {
 
+    /* 加载文章频道 */
     loadArticleChannels () {
       getArticleChannels().then(res => {
         this.channels = res.data.data.channels
@@ -193,12 +199,15 @@ export default {
     onPublish (draft = false) {
       // 找到接口
       this.$refs['publish-form'].validate(valid=>{
+
         if(!valid) {
           return
         }
         /* 验证提交表单 */
-            const articleId = this.$route.query.id
+        const articleId = this.$route.query.id
+
       if (articleId) {
+
         reEditArticle(articleId, this.article, draft).then(res => {
         /*   console.log(res) */
           this.$message({
@@ -207,25 +216,28 @@ export default {
           })
 
           this.$router.push('/')
-        }).catch(err => {
-          console.log(err, '修改失败')
+
+        }).catch(() => {
+
+          console.log('修改失败')
         })
       } else {
         /*  发布文章 */
-          addArticles(this.article, draft).then(res => {
-            /* console.log(res) */
-            this.$message({
-              message: `${draft ? '存入草稿' : '发布成功'}`,
-              type: 'success'
-            })
-            this.$router.push('/')
-            }).catch(err => {
-            console.log(err)
-            this.$message.error('操作失败')
-            })
-          }
-        })
-      // 处理结果
+         addArticles(this.article, draft).then(res => {
+           /* console.log(res) */
+           this.$message({   
+             message: draft ? '存入草稿' : '发布成功',
+             type: 'success'
+           })
+
+           this.$router.push('/')
+           })
+         }
+       })
+     // 处理结果
+    },
+    onUpdateCover(index,url) {
+      this.article.cover.images[index] = url
     }
   }
 }

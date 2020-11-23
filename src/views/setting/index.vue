@@ -203,9 +203,10 @@ export default {
   avatorChanged(file) {
     this.cropper.getCroppedCanvas().toBlob(file=>{
       const fd = new FormData()
+      
       fd.append('photo',file)
       // 请求提交
-      this.user.photo = window.URL.createObjectURL(file)
+      this.user.photo = window.URL.createObjectURL(file.files[0])
       editUserPhoto(fd).then((res)=>{
        /*  this.user.photo=res.data.data.photo */ /* 后台请求渲染 */
        /* 直接把请求结果的文件 转为 blob 显示出来 后台请求相对较慢 */
