@@ -36,7 +36,7 @@
 
 import { getFansList } from '@/api/fans.js'
 export default {
-  name: 'fansIndex', 
+  name: 'fansIndex',
   components: {},
   props: {},
   data () {
@@ -52,8 +52,8 @@ export default {
   mounted () {},
   methods: {
     loadFansList () {
-      getFansList().then( res => {
-        console.log(res);
+      getFansList().then(res => {
+        console.log(res)
       })
     }
   }

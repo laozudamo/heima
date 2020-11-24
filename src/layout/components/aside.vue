@@ -1,7 +1,7 @@
 <template>
 <!-- 路由模式 -->
     <el-menu
-      default-active="/"
+      :default-active="$route.path"
       class="el-menu-vertical-demo"
       background-color="rgb(26 45 64)"
       text-color="#fff"

@@ -20,7 +20,7 @@ export default {
   props: {},
   data () {
     return {
-       radio: 3
+      radio: 3
     }
   },
   computed: {},

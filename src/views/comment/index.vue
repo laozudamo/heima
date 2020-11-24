@@ -34,7 +34,7 @@
             {{scope.row.comment_status ? "正常" : "关闭"}}
           </template>
         </el-table-column>
-       
+
        <!-- 操作 -->
         <el-table-column
           prop="address"
@@ -51,7 +51,7 @@
         </template>
         </el-table-column>
       </el-table>
-        
+
       <!-- 分页器  使用步骤
       page-size 页面大小
       total 数据总条数
@@ -74,20 +74,20 @@
 <script>
 import { getArticles, editComment } from '@/api/article'
 export default {
-  name: 'indexcomment', 
+  name: 'indexcomment',
   components: {},
   props: {},
   data () {
     return {
       articles: [{
-        title:'',
+        title: '',
         total_comment_count: 0,
         fans_comment_count: 0,
-        totalCount:0,
+        totalCount: 0
       }],
-      pageSize:20,
-      page:1,
-      totalCommentCount:0
+      pageSize: 20,
+      page: 1,
+      totalCommentCount: 0
     }
   },
   computed: {},
@@ -98,26 +98,26 @@ export default {
   mounted () {},
   methods: {
     /* 加载文章 */
-    loadArticles(page=1) {
+    loadArticles (page = 1) {
       /* 激活页码和请求一致 */
-      this.page=page
+      this.page = page
       getArticles({
         page,
-        per_page:this.pageSize,
+        per_page: this.pageSize,
         response_type: 'comment'
       }).then(res => {
-       const results = res.data.data.results
-       results.forEach(article=>{
-         article.statusDisabled = false
-       })
-        this.articles=results
-        this.totalCommentCount=res.data.data.total_count
+        const results = res.data.data.results
+        results.forEach(article => {
+          article.statusDisabled = false
+        })
+        this.articles = results
+        this.totalCommentCount = res.data.data.total_count
       })
     },
     /* 修改评论 */
-    onStatusChange(article){
+    onStatusChange (article) {
       article.statusDisabled = true
-      editComment(article.id.toString(), !article.comment_status).then(res=>{
+      editComment(article.id.toString(), !article.comment_status).then(res => {
         article.statusDisabled = false
         this.$message({
           type: 'success',
@@ -125,12 +125,12 @@ export default {
         })
       })
     },
-    
-    handleCurrentChange(page) {
+
+    handleCurrentChange (page) {
       this.loadArticles(page)
     },
 
-    handleSizeChange() {
+    handleSizeChange () {
       this.loadArticles(1)
     }
   }

@@ -3,6 +3,9 @@
  */
 import axios from 'axios'
 import JSONbig from 'json-bigint'
+import router from '@/router'
+/* 非组件模块 用饿了吗信息提示 */
+import { Message } from 'element-ui'
 
 const request = axios.create({
   baseURL: 'http://ttapi.research.itcast.cn/', // 请求的基础路径
@@ -43,6 +46,29 @@ request.interceptors.request.use(function (config) {
 })
 // 响应拦截器
 
+axios.interceptors.response.use(function (response) {
+  // Any status code that lie within the range of 2xx cause this function to trigger
+  // Do something with response data
+  return response
+}, function (error) {
+  // Any status codes that falls outside the range of 2xx cause this function to trigger
+  // Do something with response error
+  const { status } = error.response
+  if (status === 401) {
+    // 跳转到登录页面
+    /* 清除本地用户的登录状态 */
+    window.localStorage.removeItem('user')
+    router.push('/login')
+    Message('登录状态过期，重新登录')
+  } else if (status === 403) {
+    /* 权限配置 */
+  } else if (status === 400) {
+    /* 客户端参数错误 */
+  } else if (status >= 500) {
+    /* 服务端错误 */
+  }
+  return Promise.reject(error)
+})
 // 导出请求方法
 
 export default request

@@ -30,7 +30,7 @@ const routes = [
       { path: '/comment', name: 'comment', component: Comment },
       { path: '/setting', name: 'setting', component: Setting },
       { path: '/echarts', name: 'echarts', component: Echarts },
-      { path: '/fans', name: 'fans', component: Fans },
+      { path: '/fans', name: 'fans', component: Fans }
     ]
   }
 ]
@@ -63,4 +63,5 @@ router.beforeEach((to, from, next) => {
   }
 })
 
+/* 组件里使用的this.$router 就是这玩意儿  */
 export default router

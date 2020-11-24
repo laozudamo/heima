@@ -63,14 +63,13 @@ export default {
   created () {
     // 组件初始化好 请求获取用户资料
     this.loadUserProfile()
-    
+
     /* 注事件接受 接收 */
-    globalBus.$on('updateuser',data => {
-       // this.user = data // 注意：不要这么做，对象之间赋值的是引用，会导致相互影响的问题
+    globalBus.$on('updateuser', data => {
+      // this.user = data // 注意：不要这么做，对象之间赋值的是引用，会导致相互影响的问题
       this.user.name = data.name
       this.user.photo = data.photo
     })
-
   },
   mounted () {},
   methods: {

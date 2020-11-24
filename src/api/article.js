@@ -67,7 +67,7 @@ function reEditArticle (articleId, data, draft = false) {
 }
 
 /* 修改文章评论状态 */
-function editComment (articleId,allowComment) {
+function editComment (articleId, allowComment) {
   return request({
     method: 'PUT',
     url: '/mp/v1_0/comments/status',
@@ -81,4 +81,4 @@ function editComment (articleId,allowComment) {
 }
 
 /* export 需要加逗号 */
-export { getArticles, getArticleChannels, deleteArticle, addArticles, getCurrentArticle, reEditArticle,editComment }
+export { getArticles, getArticleChannels, deleteArticle, addArticles, getCurrentArticle, reEditArticle, editComment }

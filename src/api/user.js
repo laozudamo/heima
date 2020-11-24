@@ -22,7 +22,7 @@ export const getUserProfile = () => {
   })
 }
 /* 修改用户数据 */
-export const rewriteUserData = (data)=> {
+export const rewriteUserData = (data) => {
   return request({
     method: 'PATCH',
     url: '/mp/v1_0/user/profile',
@@ -30,8 +30,8 @@ export const rewriteUserData = (data)=> {
   })
 }
 
-/* 修改用户头像  这里data 传输formData 对象过来*/
-export const editUserPhoto = (data)=> {
+/* 修改用户头像  这里data 传输formData 对象过来 */
+export const editUserPhoto = (data) => {
   return request({
     method: 'PATCH',
     url: '/mp/v1_0/user/photo',

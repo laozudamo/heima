@@ -6,7 +6,7 @@
 
 <script>
 export default {
-  name: 'mapdemo', 
+  name: 'mapdemo',
   components: {},
   props: {},
   data () {
@@ -16,9 +16,9 @@ export default {
   watch: {},
   created () {},
   mounted () {
-    var map = new window.BMap.Map("container"); 
-    var point = new window.BMap.Point(116.404, 39.915); 
-    map.centerAndZoom(point, 15);  
+    var map = new window.BMap.Map('container')
+    var point = new window.BMap.Point(116.404, 39.915)
+    map.centerAndZoom(point, 15)
   },
   methods: {}
 }

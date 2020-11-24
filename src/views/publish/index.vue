@@ -38,9 +38,16 @@
             </el-radio-group>
           </el-form-item>
 
-          <!-- 封面组件 -->
+          <!-- 封面组件
+            v-model="article.cover.images[index]"
+            相当于
+            :value = "article.cover.images[index]" 父传子
+            @input =  "article.cover.images[index]" 事件参数
+           -->
           <el-form-item>
-             <article-cover v-for="(item,index) in article.cover.type" :key="index" @update-cover="onUpdateCover(index,$event)"><!-- 只能是$event -->
+             <article-cover v-for="(item,index) in article.cover.type" :key="index"
+             v-model="article.cover.images[index]"
+             ><!-- 只能是$event -->
             </article-cover>
           </el-form-item>
 
@@ -106,10 +113,9 @@ export default {
         title: '',
         content: '',
         cover: {
-          type: 0, // 封面类型 -1:自动，0-无图，1-1张，3-3张
+          type: 1, // 封面类型 -1:自动，0-无图，1-1张，3-3张
           images: [] // 封面图片地址
         },
-        label:0,
         channel_id: null
       },
 
@@ -119,16 +125,16 @@ export default {
         title: [{ required: true, message: '请输入标题名称', trigger: 'blur' },
           { pattern: /.{5,30}/, message: '标题内容请在5-30个字符以内', trigger: 'blur' }],
         content: [{
-          validator(rule, value, callback) {
-            if(value == '<p></p>' || value == "" ) {
-              callback( new Error('请输入文章内容') )
+          validator (rule, value, callback) {
+            if (value === '<p></p>' || value === '') {
+              callback(new Error('请输入文章内容'))
             } else {
               callback()
             }
-          } 
+          }
         }],
-        channel_id: [ {
-           required: true, message: '请选择文章频道', 
+        channel_id: [{
+          required: true, message: '请选择文章频道'
         }]
       },
 
@@ -172,12 +178,11 @@ export default {
   watch: {},
 
   created () {
-
     this.loadArticleChannels()
     // 这里是route的值
     if (this.$route.query.id) {
       getCurrentArticle(this.$route.query.id).then(res => {
-        this.article = res.data.data  
+        this.article = res.data.data
       }).catch(err => {
         console.log(err)
       })
@@ -198,45 +203,42 @@ export default {
 
     onPublish (draft = false) {
       // 找到接口
-      this.$refs['publish-form'].validate(valid=>{
-
-        if(!valid) {
+      this.$refs['publish-form'].validate(valid => {
+        if (!valid) {
           return
         }
         /* 验证提交表单 */
         const articleId = this.$route.query.id
 
-      if (articleId) {
+        if (articleId) {
+          reEditArticle(articleId, this.article, draft).then(res => {
+            /*   console.log(res) */
+            this.$message({
+              message: `${draft ? '存入草稿' : '修改成功'}`,
+              type: 'success'
+            })
 
-        reEditArticle(articleId, this.article, draft).then(res => {
-        /*   console.log(res) */
-          this.$message({
-            message: `${draft ? '存入草稿' : '修改成功'}`,
-            type: 'success'
+            this.$router.push('/')
+          }).catch(() => {
+            console.log('修改失败')
           })
-
-          this.$router.push('/')
-
-        }).catch(() => {
-
-          console.log('修改失败')
-        })
-      } else {
+        } else {
         /*  发布文章 */
-         addArticles(this.article, draft).then(res => {
-           /* console.log(res) */
-           this.$message({   
-             message: draft ? '存入草稿' : '发布成功',
-             type: 'success'
-           })
+          addArticles(this.article, draft).then(res => {
+            /* console.log(res) */
+            this.$message({
+              message: draft ? '存入草稿' : '发布成功',
+              type: 'success'
+            })
 
-           this.$router.push('/')
-           })
-         }
-       })
-     // 处理结果
+            this.$router.push('/')
+          })
+        }
+      })
+      // 处理结果
     },
-    onUpdateCover(index,url) {
+    /* zf */
+    onUpdateCover (index, url) {
       this.article.cover.images[index] = url
     }
   }

@@ -23,21 +23,21 @@ function getImages (params) {
 }
 
 /* 收藏图片 */
-function collectImage(imageID,collect) {
+function collectImage (imageID, collect) {
   return request({
     method: 'PUT',
     url: `/mp/v1_0/user/images/${imageID}`,
-    data:{
+    data: {
       collect
     }
   })
 }
 
 /* 删除图片 */
-function deleteImage(imageID) {
+function deleteImage (imageID) {
   return request({
     method: 'DELETE',
-    url: `/mp/v1_0/user/images/${imageID}`,
+    url: `/mp/v1_0/user/images/${imageID}`
   })
 }
-export { uploadImage, getImages, collectImage, deleteImage}
+export { uploadImage, getImages, collectImage, deleteImage }

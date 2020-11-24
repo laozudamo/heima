@@ -22,7 +22,7 @@
               <el-form-item label="手机">
                 : {{user.mobile}}
               </el-form-item>
-              <el-form-item label="媒体名称" prop="name"> 
+              <el-form-item label="媒体名称" prop="name">
                 <el-input v-model="user.name"></el-input>
               </el-form-item>
               <el-form-item label="媒体介绍" prop="intro">
@@ -76,47 +76,47 @@
 </template>
 
 <script>
-import { getUserProfile, rewriteUserData,editUserPhoto } from '@/api/user'
+import { getUserProfile, rewriteUserData, editUserPhoto } from '@/api/user'
 import 'cropperjs/dist/cropper.css'
 import Cropper from 'cropperjs'
 import globalBus from '@/utils/globalbus.js'
 
 export default {
-  name: 'setting', 
+  name: 'setting',
   components: {},
   props: {},
   data () {
     return {
-        user: {
-          id: '',
-          name: '',
-          intro: '',
-          photo: '',
-          email:'',
-          mobile: '',
-        },
-        userProfileRule:{
-          name: [
-            {required: true, message: '请输入媒体名称', trigger: 'blur'},
-            {min: 1, max: 7, message: '长度在 1 到 7 个字符', trigger: 'blur'}
-          ],
+      user: {
+        id: '',
+        name: '',
+        intro: '',
+        photo: '',
+        email: '',
+        mobile: ''
+      },
+      userProfileRule: {
+        name: [
+          { required: true, message: '请输入媒体名称', trigger: 'blur' },
+          { min: 1, max: 7, message: '长度在 1 到 7 个字符', trigger: 'blur' }
+        ],
 
-          intro: [
-            {required: true, message: '请输入媒体简洁', trigger: 'blur'}
-          ],
+        intro: [
+          { required: true, message: '请输入媒体简洁', trigger: 'blur' }
+        ],
 
-          email: [
-            { required: true, message: '请输入邮箱地址', trigger: 'blur' },
-            { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] } 
-          ]
+        email: [
+          { required: true, message: '请输入邮箱地址', trigger: 'blur' },
+          { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
+        ]
 
-        },
-        dialogVisible: false, /* 控制上传图片预览的 显示状态 */
-        prviewImage: '', /* 图片地址 */
+      },
+      dialogVisible: false, /* 控制上传图片预览的 显示状态 */
+      prviewImage: '', /* 图片地址 */
 
-        cropper: null, /* 裁剪器 */
-       
-      }
+      cropper: null /* 裁剪器 */
+
+    }
   },
   computed: {},
   watch: {},
@@ -125,12 +125,12 @@ export default {
   },
   mounted () {},
   methods: {
-    onSave() {
+    onSave () {
       /* 触发表单验证 */
-      this.$refs['userDataForm'].validate((valid) => {
+      this.$refs.userDataForm.validate((valid) => {
         if (!valid) {
           return
-        } 
+        }
 
         /* 提交用户数据 */
         /* const { name,intro,email } = this.user */ /* 直接解构 */
@@ -140,85 +140,85 @@ export default {
           email: this.user.email
         }).then(() => {
           /* 更新用户资料 */
-          globalBus.$emit('updateuser',this.user)
-          
+          globalBus.$emit('updateuser', this.user)
+
           this.$message({
             type: 'success',
             message: '保存成功'
           })
         })
-        .catch((err) => {
-            console.log(err,'修改失败');
+          .catch((err) => {
+            console.log(err, '修改失败')
           })
       })
     },
     /* 用户资料 */
-    loadgetUserProfile() {
-      getUserProfile().then( res => {
+    loadgetUserProfile () {
+      getUserProfile().then(res => {
         this.user = res.data.data
       })
     },
-    
-  /* 改变文件的时候才触发 */
-  onFileChange() {
+
+    /* 改变文件的时候才触发 */
+    onFileChange () {
     /* 知识点 const file =this.$refs.file.files[0] 得到关于图片的信息  */
-    const file =this.$refs.file
-     
-    /* blobData 的地址 可以给src 直接预览 知识点 */
-    const blobData = window.URL.createObjectURL(file.files[0]) 
-    this.prviewImage = blobData
+      const file = this.$refs.file
 
-     /* 展示弹出层 预览文件 */
-    this.dialogVisible = true
+      /* blobData 的地址 可以给src 直接预览 知识点 */
+      const blobData = window.URL.createObjectURL(file.files[0])
+      this.prviewImage = blobData
 
-    /* 解决相同文件不触发 */
-    this.$refs.file.value = ''
-  },
+      /* 展示弹出层 预览文件 */
+      this.dialogVisible = true
 
-  onDialogOpened () {
-     /* 获取dom 操作dom 原生的也可以操作dom*/
-    const image = this.$refs['prview-image']
-    /* 图片裁切器必须基于img初始化 */
-    if(this.cropper) {
-      this.cropper.replace(this.prviewImage)
-      return
-    }
-    
-    /* 这里有BUG */
-    this.cropper = new Cropper(image, {
-      aspectRatio: 1,
-      background:false,
-      movable:true,
+      /* 解决相同文件不触发 */
+      this.$refs.file.value = ''
+    },
 
-      viewMode: 1,
-    })
-  },
+    onDialogOpened () {
+      /* 获取dom 操作dom 原生的也可以操作dom */
+      const image = this.$refs['prview-image']
+      /* 图片裁切器必须基于img初始化 */
+      if (this.cropper) {
+        this.cropper.replace(this.prviewImage)
+        return
+      }
 
-  /* 方案二 对话框关闭 销毁 裁剪器cropper  销毁的方法*/
-/*   onDialogClosed() {
+      /* 这里有BUG */
+      this.cropper = new Cropper(image, {
+        aspectRatio: 1,
+        background: false,
+        movable: true,
+
+        viewMode: 1
+      })
+    },
+
+    /* 方案二 对话框关闭 销毁 裁剪器cropper  销毁的方法 */
+    /*   onDialogClosed() {
     this.cropper.destroy()
   } */
 
-  /* 用户头像修改 */
-  avatorChanged(file) {
-    this.cropper.getCroppedCanvas().toBlob(file=>{
-      const fd = new FormData()
-      
-      fd.append('photo',file)
-      // 请求提交
-      this.user.photo = window.URL.createObjectURL(file.files[0])
-      editUserPhoto(fd).then((res)=>{
-       /*  this.user.photo=res.data.data.photo */ /* 后台请求渲染 */
-       /* 直接把请求结果的文件 转为 blob 显示出来 后台请求相对较慢 */
-        this.dialogVisible = false
-        this.$message({
-          type:'success',
-          message: '修改成功'
+    /* 用户头像修改 */
+    avatorChanged (file) {
+      this.cropper.getCroppedCanvas().toBlob(file => {
+        const fd = new FormData()
+
+        fd.append('photo', file)
+        // 请求提交
+        this.user.photo = window.URL.createObjectURL(file.files[0])
+        editUserPhoto(fd).then((res) => {
+          /*  this.user.photo=res.data.data.photo */ /* 后台请求渲染 */
+          /* 直接把请求结果的文件 转为 blob 显示出来 后台请求相对较慢 */
+          this.dialogVisible = false
+          this.$message({
+            type: 'success',
+            message: '修改成功'
           })
         })
 
         /* 更新用户登录头像 */
-         globalBus.$emit('updateuser',this.user)
+        globalBus.$emit('updateuser', this.user)
       })
     }
   }
